@@ -1,4 +1,5 @@
 import json
+import importlib
 import pytest
 import tempfile
 import pathlib
@@ -12,6 +13,17 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))
 with patch('pathlib.Path.exists', return_value=True):
     with patch('pathlib.Path.write_text'):
         import expense_tracker
+
+
+def test_module_import_does_not_prompt_for_menu_input():
+    """Importing the module should not start the interactive menu."""
+    with patch("pathlib.Path.exists", return_value=True):
+        with patch("pathlib.Path.write_text"):
+            with patch(
+                "builtins.input",
+                side_effect=AssertionError("input should not be called on import")
+            ):
+                importlib.reload(expense_tracker)
 
 
 class TestRecordExpenses:
