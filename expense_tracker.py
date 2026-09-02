@@ -233,32 +233,38 @@ def add_expense() -> None:
 # ============================================================
 # Expense Tracker Menu
 # ============================================================
-while True:
-    print("\n==============================")
-    print("       EXPENSE TRACKER")
-    print("==============================")
-    print("1. Add expense")
-    print("2. Show expenses")
-    print("3. Exit")
-    option = input("Enter your choice: ")
-    # ========================================================
-    # Handle Menu Option
-    # ========================================================
-    try:
-        if option == "1":
-            add_expense()
-        elif option == "2":
-            expenses = record_expenses()
-            show_expenses(expenses)
-        elif option == "3":
-            print("Goodbye!")
-            break
-        else:
+def main() -> None:
+    """Run the interactive expense tracker menu."""
+    while True:
+        print("\n==============================")
+        print("       EXPENSE TRACKER")
+        print("==============================")
+        print("1. Add expense")
+        print("2. Show expenses")
+        print("3. Exit")
+        option = input("Enter your choice: ")
+        # ========================================================
+        # Handle Menu Option
+        # ========================================================
+        try:
+            if option == "1":
+                add_expense()
+            elif option == "2":
+                expenses = record_expenses()
+                show_expenses(expenses)
+            elif option == "3":
+                print("Goodbye!")
+                break
+            else:
                 raise OptionError(
                     "Invalid input. "
                     "Please choose 1, 2, or 3."
                 )
-    except OptionError as error:
-        print(error)
-    except JsonError as error:
-        print(f"File error: {error}")
+        except OptionError as error:
+            print(error)
+        except JsonError as error:
+            print(f"File error: {error}")
+
+
+if __name__ == "__main__":
+    main()

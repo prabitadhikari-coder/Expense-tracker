@@ -1,4 +1,5 @@
 import json
+import importlib.util
 import pytest
 import tempfile
 import pathlib
@@ -222,3 +223,28 @@ class TestCustomExceptions:
         """Test EmptyFieldError exception."""
         with pytest.raises(expense_tracker.EmptyFieldError):
             raise expense_tracker.EmptyFieldError("Field cannot be empty.")
+
+
+class TestModuleImportBehavior:
+    """Test module import side effects."""
+
+    def test_import_does_not_prompt_for_input(self):
+        """Importing the module should not start the interactive menu."""
+        module_path = pathlib.Path(__file__).parent.parent / "expense_tracker.py"
+        spec = importlib.util.spec_from_file_location(
+            "expense_tracker_import_check",
+            module_path
+        )
+        module = importlib.util.module_from_spec(spec)
+        assert spec is not None
+        assert spec.loader is not None
+
+        with patch("pathlib.Path.exists", return_value=True):
+            with patch("pathlib.Path.write_text"):
+                with patch(
+                    "builtins.input",
+                    side_effect=AssertionError(
+                        "input should not be called during import"
+                    )
+                ):
+                    spec.loader.exec_module(module)
